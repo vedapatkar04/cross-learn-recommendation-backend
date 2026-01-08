@@ -7,6 +7,7 @@ interface IUser {
     name?: string;
     authToken: string
     socketId: string;
+    isAdmin: boolean;
  }
 
 interface IUserType extends IUser {
@@ -23,6 +24,7 @@ const schema = new Schema<IUserType>(
     name: { type: String, required: false, default: '' },
     authToken: { type: String, required: false, default: '' },
     socketId: { type: String, required: false, default: '' },
+    isAdmin: { type: Boolean, required: false, default: false },
     },
   {
     timestamps: { createdAt: 'dCreatedAt', updatedAt: 'dUpdatedAt' },

@@ -9,6 +9,7 @@ const schema = new mongoose_1.Schema({
     name: { type: String, required: false, default: '' },
     authToken: { type: String, required: false, default: '' },
     socketId: { type: String, required: false, default: '' },
+    isAdmin: { type: Boolean, required: false, default: false },
 }, {
     timestamps: { createdAt: 'dCreatedAt', updatedAt: 'dUpdatedAt' },
 });
