@@ -5,7 +5,10 @@ import bcrypt from "bcryptjs";
 
 async function login(req: req, res: res) {
   try {
-    const { userName, email, password } = req.body;
+    const { email, password } = req.body;
+
+    if (!email || !password)
+      return res.status(400).json({ message: "Email and password required" });
 
     //if user exist
     const existing_user = await User.findOne({ email: email }).lean();
@@ -15,25 +18,23 @@ async function login(req: req, res: res) {
     // Password match
     const password_match = await bcrypt.compare(
       password,
-      existing_user.password
+      existing_user.password,
     );
     if (!password_match)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign(
-      { id: existing_user._id },
+    const accessToken = jwt.sign(
+      { userId: existing_user._id },
       process.env.JWT_SECRET as string,
-      { expiresIn: "1d" }
+      { expiresIn: "15m" },
     );
-
-    await User.updateOne({ email }, { $set: { authToken: token } });
 
     res.json({
       message: "Login successfull",
       responseMsg: {
         userId: existing_user._id,
         email: existing_user.email,
-        authToken: token,
+        accessToken,
       },
     });
   } catch (error) {

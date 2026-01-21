@@ -5,7 +5,10 @@ import bcrypt from "bcryptjs";
 
 async function register(req: req, res: res) {
   try {
-    const { userName, email, password } = req.body;
+    const {email, password } = req.body;
+
+    if (!email || !password)
+      return res.status(400).json({ message: "Email and password required" });
 
     //if user exist
     const existing_user = await User.findOne({ email: email }).lean();
@@ -16,24 +19,22 @@ async function register(req: req, res: res) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      userName,
       email,
       password: hashedPassword,
     });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
-      expiresIn: "1d",
-    });
-
-    await User.updateOne({ email }, { $set: { authToken: token } });
+     const accessToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "15m" }
+    );
 
     res.json({
       message: "Registered successful",
       responseMsg: {
         userId: user._id,
-        userName: userName,
         email: email,
-        authToken: token,
+        accessToken,
       },
     });
   } catch (error) {
