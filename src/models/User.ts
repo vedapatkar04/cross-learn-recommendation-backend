@@ -1,14 +1,22 @@
 import { Schema, model } from "mongoose";
 
+enum levels {
+  beginner = 1,
+  intermediate = 2,
+  advanced = 3,
+}
+
 interface IUser {
-    userName: string;
-    email: string;
-    password: string
-    name?: string;
-    authToken: string
-    socketId: string;
-    isAdmin: boolean;
- }
+  email: string;
+  password: string;
+  name?: string;
+  authToken: string;
+  socketId: string;
+  isAdmin: boolean;
+  skillLevel: levels;
+  interests: string[];
+  learningGoals: string[];
+}
 
 interface IUserType extends IUser {
   _id: Schema.Types.ObjectId;
@@ -18,21 +26,28 @@ interface IUserType extends IUser {
 
 const schema = new Schema<IUserType>(
   {
-    userName: { type: String, index: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    name: { type: String, required: false, default: '' },
-    authToken: { type: String, required: false, default: '' },
-    socketId: { type: String, required: false, default: '' },
+    name: { type: String, required: false, default: "" },
+    authToken: { type: String, required: false, default: "" },
+    socketId: { type: String, required: false, default: "" },
     isAdmin: { type: Boolean, required: false, default: false },
+    skillLevel: {
+      type: Number,
+      enum: levels,
+      required: false,
+      default: levels.beginner,
     },
+    interests: [{ type: String, required: false, default: [] }],
+    learningGoals: [{ type: String, required: false, default: [] }],
+  },
   {
-    timestamps: { createdAt: 'dCreatedAt', updatedAt: 'dUpdatedAt' },
-  }
+    timestamps: { createdAt: "dCreatedAt", updatedAt: "dUpdatedAt" },
+  },
 );
 
 schema.index({ email: 1 });
 
-const User = model<IUserType>('User', schema, 'User');
+const User = model<IUserType>("User", schema, "User");
 
 export { User, IUser, IUserType };
