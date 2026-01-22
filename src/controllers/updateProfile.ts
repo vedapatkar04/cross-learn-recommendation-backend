@@ -4,7 +4,7 @@ import { AuthRequest } from "../authorization/auth";
 
 async function updateProfile(req: AuthRequest, res: res) {
   try {
-    const user = await User.findOne({ email: req.body.email }).lean();
+    const user = await User.findOne({ _id: req.user!.userId }).lean();
 
     if (!user) return res.status(206).json({ message: "User Not Found" });
 

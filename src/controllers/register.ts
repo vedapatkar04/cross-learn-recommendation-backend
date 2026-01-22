@@ -1,40 +1,41 @@
-import { Request as req, Response as res } from "express";
+import { Request, Response } from "express";
 import { User } from "../models";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { isValidRequest as uservalidator } from "../validator/login_validdator";
+import generateTokenAndSetCookie from "../util/generateToken";
 
-async function register(req: req, res: res) {
+async function register(req: Request, res: Response) {
   try {
-    const {email, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!email || !password)
-      return res.status(400).json({ message: "Email and password required" });
+    const { error, info } = await uservalidator(req.body);
+    if (error)
+      return res
+        .status(400)
+        .json({ info, message: "Email and password required" });
 
-    //if user exist
-    const existing_user = await User.findOne({ email: email }).lean();
+    // Check if user exists
+    const existing_user = await User.findOne({ email }).lean();
     if (existing_user)
-      return res.status(400).json({ message: "User Already Exist" });
+      return res.status(400).json({ message: "User Already Exists" });
 
-    // Password match
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create user
     const user = await User.create({
       email,
       password: hashedPassword,
     });
 
-     const accessToken = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "15m" }
-    );
+    // ✅ Set JWT in HTTP-only cookie
+    generateTokenAndSetCookie(user._id.toString(), res);
 
-    res.json({
-      message: "Registered successful",
-      responseMsg: {
-        userId: user._id,
-        email: email,
-        accessToken,
+    res.status(201).json({
+      message: "Registered successfully",
+      user: {
+        id: user._id,
+        email: user.email,
       },
     });
   } catch (error) {

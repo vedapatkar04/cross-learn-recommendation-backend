@@ -2,6 +2,7 @@ import { Router } from "express";
 import { register } from "../controllers/register";
 import { login } from "../controllers/login";
 import { updateProfile } from "../controllers/updateProfile";
+import { logout } from "../controllers/logout";
 import { authMiddleware } from "../authorization/auth";
 
 const router = Router();
@@ -9,5 +10,7 @@ const router = Router();
 router.post("/register", register);
 router.post("/login", login);
 router.post("/updateProfile", authMiddleware, updateProfile);
+router.post("/logout", logout);
+
 
 export default router;
