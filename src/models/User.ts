@@ -10,7 +10,6 @@ interface IUser {
   email: string;
   password: string;
   name?: string;
-  socketId: string;
   isAdmin: boolean;
   skillLevel: levels;
   interests: string[];
@@ -28,7 +27,6 @@ const schema = new Schema<IUserType>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     name: { type: String, required: false, default: "" },
-    socketId: { type: String, required: false, default: "" },
     isAdmin: { type: Boolean, required: false, default: false },
     skillLevel: {
       type: Number,

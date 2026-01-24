@@ -6,8 +6,15 @@ async function updateProfile(req, res) {
     try {
         const user = await models_1.User.findOne({ _id: req.user.userId }).lean();
         if (!user)
-            return res.status(206).json({ message: "User Not Found" });
-        await models_1.User.updateOne({ _id: user._id }, { $set: { name: req.body.name } });
+            return res.status(404).json({ message: "User Not Found" });
+        const updates = {
+            $set: { ...req.body },
+        };
+        await models_1.User.updateOne({ _id: user._id }, updates, {
+            new: true,
+            upsert: true,
+            runValidators: true,
+        });
         res.json({
             message: "Updated successfull",
         });

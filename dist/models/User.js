@@ -12,7 +12,6 @@ const schema = new mongoose_1.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     name: { type: String, required: false, default: "" },
-    socketId: { type: String, required: false, default: "" },
     isAdmin: { type: Boolean, required: false, default: false },
     skillLevel: {
         type: Number,
