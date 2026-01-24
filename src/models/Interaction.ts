@@ -49,4 +49,4 @@ const Interaction = model<IUserContentType>(
   "Interaction",
 );
 
-export { Interaction, IUserContent, IUserContentType };
+export { Interaction, IUserContent, IUserContentType, action };

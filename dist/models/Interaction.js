@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Interaction = void 0;
+exports.action = exports.Interaction = void 0;
 const mongoose_1 = require("mongoose");
 var action;
 (function (action) {
@@ -10,7 +10,7 @@ var action;
     action[action["complete"] = 4] = "complete";
     action[action["rate"] = 5] = "rate";
     action[action["bookmark"] = 6] = "bookmark";
-})(action || (action = {}));
+})(action || (exports.action = action = {}));
 var types;
 (function (types) {
     types[types["course"] = 1] = "course";
