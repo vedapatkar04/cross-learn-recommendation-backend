@@ -1,9 +1,9 @@
 import { Request as req, Response as res } from "express";
-import { User } from "../models";
+import { User } from "../../models";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import generateTokenAndSetCookie from "../util/generateToken";
-import { isValidRequest as uservalidator } from "../validator/login_validdator";
+import generateTokenAndSetCookie from "../../util/generateToken";
+import { isValidRequest as uservalidator } from "../../validator/login_validdator";
 
 async function login(req: req, res: res) {
   try {

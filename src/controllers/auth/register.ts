@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { User } from "../models";
+import { User } from "../../models";
 import bcrypt from "bcryptjs";
-import { isValidRequest as uservalidator } from "../validator/login_validdator";
-import generateTokenAndSetCookie from "../util/generateToken";
+import { isValidRequest as uservalidator } from "../../validator/login_validdator";
+import generateTokenAndSetCookie from "../../util/generateToken";
 
 async function register(req: Request, res: Response) {
   try {

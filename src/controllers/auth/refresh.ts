@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import generateTokenAndSetCookie from "../util/generateToken";
+import generateTokenAndSetCookie from "../../util/generateToken";
 
 async function refresh(req: Request, res: Response) {
   try {

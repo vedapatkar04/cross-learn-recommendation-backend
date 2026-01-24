@@ -1,6 +1,6 @@
 import { Request as req, Response as res } from "express";
-import { User } from "../models";
-import { AuthRequest } from "../authorization/auth";
+import { User } from "../../models";
+import { AuthRequest } from "../../authorization/auth";
 
 async function updateProfile(req: AuthRequest, res: res) {
   try {

@@ -3,7 +3,7 @@ import { authMiddleware } from "../authorization/auth";
 
 const router = Router();
 
-router.post("/register", );
+router.post("/", );
 
 
 export default router;
