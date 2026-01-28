@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isValidRequest = void 0;
+exports.isValidRequest = isValidRequest;
 const joi_1 = __importDefault(require("joi"));
 const option = {
     errors: {
@@ -26,4 +26,3 @@ async function isValidRequest(data) {
         return { error: true, info: err.details[0]?.message };
     }
 }
-exports.isValidRequest = isValidRequest;

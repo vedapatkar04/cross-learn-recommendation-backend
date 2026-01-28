@@ -1,47 +1,93 @@
-import { MasterContent, Interaction, action } from "../../models";
-import { Request as req, Response as res } from "express";
+import { MasterContent, action } from "../../models";
+import { Request, Response } from "express";
+import { AuthRequest } from "../../authorization/auth";
+import mongoose from "mongoose";
+import { M } from "../../config/db";
 
-async function getContentDetails(req: req, res: res) {
+export async function getContentDetails(req: AuthRequest, res: Response) {
   try {
-    const [content, user_content] = await Promise.all([
-      MasterContent.findOne(
-        { _id: req.body.contentId },
-        { dCreatedAt: 0, dUpdatedAt: 0 },
-      ).lean(),
-      Interaction.findOne(
-        { contentId: req.body.contentId, userId: req.body.userId },
-        { action: 1, rating: 1 },
-      ).lean(),
-    ]);
+    const contentId = req.params.id;
+    const userId = req.user?.userId;
 
-    if (!content) return res.status(404).json({ message: "Data Not Found" });
+    if (!mongoose.Types.ObjectId.isValid(contentId)) {
+      return res.status(400).json({ message: "Invalid content id" });
+    }
 
-    const data = {
-      contentId: content._id,
-      title: content.title,
-      description: content.description,
-      action: user_content ? user_content.action : action.view,
-      rating: user_content ? user_content.rating : 0,
-      skills: content.skills, // course
-      topics: content.topics, // book
-      difficulty: content.difficulty,
-      duration: content.duration, // course
-      readingTime: content.readingTime, // book
-      instructor: content.instructor, // course
-      author: content.author, // book
-      type: content.type,
-      popularityScore: content.popularityScore,
-      avgRating: content.avgRating,
-    };
-
-    res.json({
-      responseMsg: {
-        master_content: data,
+    const pipeline: any[] = [
+      {
+        $match: {
+          _id: M.mongify(contentId),
+        },
       },
+
+      {
+        $lookup: {
+          from: "Interaction", 
+          let: { contentId: "$_id", userId: userId ? M.mongify(userId) : null },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$contentId", "$$contentId"] },
+                    { $eq: ["$userId", "$$userId"] },
+                  ],
+                },
+              },
+            },
+            {
+              $project: {
+                action: 1,
+                rating: 1,
+                _id: 0,
+              },
+            },
+          ],
+          as: "interaction",
+        },
+      },
+
+      {
+        $unwind: {
+          path: "$interaction",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      {
+        $addFields: {
+          userAction: {
+            $ifNull: ["$interaction.action", action.view],
+          },
+          userRating: {
+            $ifNull: ["$interaction.rating", 0],
+          },
+        },
+      },
+
+      {
+        $project: {
+          interaction: 0,
+          dCreatedAt: 0,
+          dUpdatedAt: 0,
+          __v: 0,
+        },
+      },
+    ];
+    const [result] = await MasterContent.aggregate(pipeline);
+
+    if (!result) {
+      return res.status(404).json({ message: "Content not found" });
+    }
+
+    return res.status(200).json({
+      message: "Success",
+      responseMsg: {
+        data: result
+      }
     });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
+  } catch (error) {
+    console.error("getContentDetails error:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 }
-
-export { getContentDetails };

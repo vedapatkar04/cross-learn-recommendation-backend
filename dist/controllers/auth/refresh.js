@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.refresh = void 0;
+exports.refresh = refresh;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const generateToken_1 = __importDefault(require("../../util/generateToken"));
 async function refresh(req, res) {
@@ -21,4 +21,3 @@ async function refresh(req, res) {
         res.status(401).json({ message: "Invalid token" });
     }
 }
-exports.refresh = refresh;

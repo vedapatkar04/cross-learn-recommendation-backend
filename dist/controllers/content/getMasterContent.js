@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMasterContent = void 0;
+exports.getMasterContent = getMasterContent;
 const models_1 = require("../../models");
 async function getMasterContent(req, res) {
     try {
@@ -17,4 +17,3 @@ async function getMasterContent(req, res) {
         res.status(500).json({ message: "Server error" });
     }
 }
-exports.getMasterContent = getMasterContent;

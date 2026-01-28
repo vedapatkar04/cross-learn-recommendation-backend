@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserProfile = void 0;
+exports.getUserProfile = getUserProfile;
 const models_1 = require("../../models");
 async function getUserProfile(req, res) {
     try {
@@ -17,4 +17,3 @@ async function getUserProfile(req, res) {
         res.status(500).json({ message: "Server error" });
     }
 }
-exports.getUserProfile = getUserProfile;

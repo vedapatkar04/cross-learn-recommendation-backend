@@ -1,40 +1,89 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getContentDetails = void 0;
+exports.getContentDetails = getContentDetails;
 const models_1 = require("../../models");
+const mongoose_1 = __importDefault(require("mongoose"));
+const db_1 = require("../../config/db");
 async function getContentDetails(req, res) {
     try {
-        const [content, user_content] = await Promise.all([
-            models_1.MasterContent.findOne({ _id: req.body.contentId }, { dCreatedAt: 0, dUpdatedAt: 0 }).lean(),
-            models_1.Interaction.findOne({ contentId: req.body.contentId, userId: req.body.userId }, { action: 1, rating: 1 }).lean(),
-        ]);
-        if (!content)
-            return res.status(404).json({ message: "Data Not Found" });
-        const data = {
-            contentId: content._id,
-            title: content.title,
-            description: content.description,
-            action: user_content ? user_content.action : models_1.action.view,
-            rating: user_content ? user_content.rating : 0,
-            skills: content.skills, // course
-            topics: content.topics, // book
-            difficulty: content.difficulty,
-            duration: content.duration, // course
-            readingTime: content.readingTime, // book
-            instructor: content.instructor, // course
-            author: content.author, // book
-            type: content.type,
-            popularityScore: content.popularityScore,
-            avgRating: content.avgRating,
-        };
-        res.json({
-            responseMsg: {
-                master_content: data,
+        const contentId = req.params.id;
+        const userId = req.user?.userId;
+        if (!mongoose_1.default.Types.ObjectId.isValid(contentId)) {
+            return res.status(400).json({ message: "Invalid content id" });
+        }
+        const pipeline = [
+            {
+                $match: {
+                    _id: db_1.M.mongify(contentId),
+                },
             },
+            {
+                $lookup: {
+                    from: "Interaction",
+                    let: { contentId: "$_id", userId: userId ? db_1.M.mongify(userId) : null },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$contentId", "$$contentId"] },
+                                        { $eq: ["$userId", "$$userId"] },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                action: 1,
+                                rating: 1,
+                                _id: 0,
+                            },
+                        },
+                    ],
+                    as: "interaction",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$interaction",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    userAction: {
+                        $ifNull: ["$interaction.action", models_1.action.view],
+                    },
+                    userRating: {
+                        $ifNull: ["$interaction.rating", 0],
+                    },
+                },
+            },
+            {
+                $project: {
+                    interaction: 0,
+                    dCreatedAt: 0,
+                    dUpdatedAt: 0,
+                    __v: 0,
+                },
+            },
+        ];
+        const [result] = await models_1.MasterContent.aggregate(pipeline);
+        if (!result) {
+            return res.status(404).json({ message: "Content not found" });
+        }
+        return res.status(200).json({
+            message: "Success",
+            responseMsg: {
+                data: result
+            }
         });
     }
-    catch (err) {
-        res.status(500).json({ message: "Server error" });
+    catch (error) {
+        console.error("getContentDetails error:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 }
-exports.getContentDetails = getContentDetails;

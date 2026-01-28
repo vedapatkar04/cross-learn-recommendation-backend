@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
+exports.login = login;
 const models_1 = require("../../models");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const generateToken_1 = __importDefault(require("../../util/generateToken"));
@@ -37,4 +37,3 @@ async function login(req, res) {
         res.status(500).json({ message: "Server error" });
     }
 }
-exports.login = login;
