@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const getMasterContent_1 = require("../controllers/content/getMasterContent");
+const contentFunction_1 = require("../controllers/content/contentFunction");
 const router = (0, express_1.Router)();
-router.get("/getMasterContent", getMasterContent_1.getMasterContent);
+router.get("/", contentFunction_1.getMasterContent);
+router.get("/:id", contentFunction_1.getContentDetails);
 exports.default = router;

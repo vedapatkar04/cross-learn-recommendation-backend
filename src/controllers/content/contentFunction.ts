@@ -1,10 +1,31 @@
 import { MasterContent, action } from "../../models";
-import { Request, Response } from "express";
 import { AuthRequest } from "../../authorization/auth";
 import mongoose from "mongoose";
 import { M } from "../../config/db";
+import { Request as req, Response as res } from "express";
 
-export async function getContentDetails(req: AuthRequest, res: Response) {
+export async function getMasterContent(req: req, res: res) {
+  try {
+    const master_content = await MasterContent.find(
+      { },
+      { dCreatedAt: 0, dUpdatedAt: 0 },
+    ).lean();
+
+    if (!master_content) return res.status(404).json({ message: "Data Not Found" });
+
+    res.json({
+      responseMsg: {
+        master_content: master_content,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+// id
+export async function getContentDetails(req: AuthRequest, res: res) {
   try {
     const contentId = req.params.id;
     const userId = req.user?.userId;
