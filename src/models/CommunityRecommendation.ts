@@ -6,6 +6,7 @@ interface IRecommendation {
   toContentId: Schema.Types.ObjectId;
   reason: string;
   upvotes: number;
+  reported: boolean;
 }
 
 interface IRecommendationType extends IRecommendation {
@@ -29,8 +30,9 @@ const schema = new Schema<IRecommendationType>(
     },
     reason: { type: String, required: false, default: "" },
     upvotes: { type: Number, default: 0 },
+    reported: { type: Boolean, default: false },
   },
-  { timestamps: true },
+  { timestamps: { createdAt: "dCreatedAt", updatedAt: "dUpdatedAt" }, },
 );
 
 const CommunityRecommendation = model<IRecommendationType>(

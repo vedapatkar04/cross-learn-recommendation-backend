@@ -24,7 +24,7 @@ const schema = new Schema<IDiscussionType>(
     likes: { type: Number, default: 0 },
     isDeleted: { type: Boolean, default: false },
   },
-  { timestamps: true },
+  { timestamps: { createdAt: "dCreatedAt", updatedAt: "dUpdatedAt" }, },
 );
 
 const Discussion = model<IDiscussionType>("Discussion", schema, "Discussion");

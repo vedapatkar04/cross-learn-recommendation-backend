@@ -16,6 +16,7 @@ const schema = new mongoose_1.Schema({
     },
     reason: { type: String, required: false, default: "" },
     upvotes: { type: Number, default: 0 },
-}, { timestamps: true });
+    reported: { type: Boolean, default: false },
+}, { timestamps: { createdAt: "dCreatedAt", updatedAt: "dUpdatedAt" }, });
 const CommunityRecommendation = (0, mongoose_1.model)("CommunityRecommendation", schema, "CommunityRecommendation");
 exports.CommunityRecommendation = CommunityRecommendation;

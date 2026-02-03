@@ -9,6 +9,6 @@ const schema = new mongoose_1.Schema({
     body: { type: String, required: false, default: "" },
     likes: { type: Number, default: 0 },
     isDeleted: { type: Boolean, default: false },
-}, { timestamps: true });
+}, { timestamps: { createdAt: "dCreatedAt", updatedAt: "dUpdatedAt" }, });
 const Discussion = (0, mongoose_1.model)("Discussion", schema, "Discussion");
 exports.Discussion = Discussion;

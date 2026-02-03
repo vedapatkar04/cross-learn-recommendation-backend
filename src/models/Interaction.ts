@@ -40,7 +40,7 @@ const schema = new Schema<IUserContentType>(
     rating: { type: Number, min: 1, max: 5 },
     type: { type: Number, enum: types, required: false, default: types.course },
   },
-  { timestamps: true },
+  { timestamps: { createdAt: "dCreatedAt", updatedAt: "dUpdatedAt" }, },
 );
 
 const Interaction = model<IUserContentType>(

@@ -26,6 +26,6 @@ const schema = new mongoose_1.Schema({
     },
     rating: { type: Number, min: 1, max: 5 },
     type: { type: Number, enum: types, required: false, default: types.course },
-}, { timestamps: true });
+}, { timestamps: { createdAt: "dCreatedAt", updatedAt: "dUpdatedAt" }, });
 const Interaction = (0, mongoose_1.model)("Interaction", schema, "Interaction");
 exports.Interaction = Interaction;
