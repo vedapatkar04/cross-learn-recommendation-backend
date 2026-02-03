@@ -7,7 +7,7 @@ exports.upsertInteraction = upsertInteraction;
 exports.getUserInteractions = getUserInteractions;
 const mongoose_1 = __importDefault(require("mongoose"));
 const models_1 = require("../../models");
-const recommendation_job_1 = require("../../jobs/recommendation.job");
+const recommendation_queue_1 = require("../../jobs/recommendation.queue");
 async function upsertInteraction(input) {
     const interaction = await models_1.Interaction.findOneAndUpdate({
         userId: new mongoose_1.default.Types.ObjectId(input.userId),
@@ -22,7 +22,7 @@ async function upsertInteraction(input) {
         upsert: true,
         new: true,
     }).lean();
-    await (0, recommendation_job_1.queueRecomputeRecommendations)(input.userId);
+    await (0, recommendation_queue_1.queueRecomputeRecommendations)(input.userId);
     return interaction;
 }
 async function getUserInteractions(userId) {

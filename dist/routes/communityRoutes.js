@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const communityRecomFunction_1 = require("../controllers/communityRecommendation/communityRecomFunction");
+const auth_1 = require("../authorization/auth");
+const router = (0, express_1.Router)();
+router.post("/", auth_1.authMiddleware, communityRecomFunction_1.create);
+router.post("/:id/upvote/:fromContentId", auth_1.authMiddleware, communityRecomFunction_1.upvote);
+router.get("/:contentId", communityRecomFunction_1.list);
+exports.default = router;

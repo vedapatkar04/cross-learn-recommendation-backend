@@ -7,3 +7,4 @@ export {
 export { Discussion, IDiscussion, IDiscussionType } from "./Discussion";
 export { Interaction, IUserContent, IUserContentType, action } from "./Interaction";
 export { MasterContent, IContent, IContentType } from "./MasterContent";
+export { UserRecommendation, IUserRecommendation, IUserRecommendationType } from './UserInteraction';

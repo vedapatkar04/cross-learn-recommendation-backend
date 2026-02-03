@@ -5,7 +5,7 @@ import { authMiddleware } from "../authorization/auth";
 const router = Router();
 
 router.get("/", getMasterContent);
-router.get("/:id", getContentDetails);
+router.get("/:id", authMiddleware, getContentDetails);
 
 
 export default router;

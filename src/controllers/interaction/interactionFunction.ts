@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { action } from "../../models";
 import * as interactionService from "./interactionService";
+import { AuthRequest } from "../../authorization/auth";
 
-export async function trackInteraction(req: Request, res: Response) {
+export async function trackInteraction(req: AuthRequest, res: Response) {
   try {
-    const userId = req.params.userId;
+    const userId = req.user!.userId;
     const { contentId, action: userAction, rating, type } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(contentId)) {
@@ -16,7 +17,10 @@ export async function trackInteraction(req: Request, res: Response) {
       return res.status(400).json({ message: "Invalid action" });
     }
 
-    if (userAction === action.rate && (!rating || rating < 1 || rating > 5)) {
+    if (
+      userAction === action.rate &&
+      (rating === undefined || rating < 1 || rating > 5)
+    ) {
       return res.status(400).json({ message: "Invalid rating" });
     }
 
@@ -38,9 +42,9 @@ export async function trackInteraction(req: Request, res: Response) {
   }
 }
 
-export async function getMyInteractions(req: Request, res: Response) {
+export async function getMyInteractions(req: AuthRequest, res: Response) {
   try {
-    const userId = req.params.userId;
+    const userId = req.user!.userId;
 
     const interactions = await interactionService.getUserInteractions(userId);
 

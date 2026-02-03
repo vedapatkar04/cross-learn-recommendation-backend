@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Interaction } from "../../models";
-import { queueRecomputeRecommendations } from "../../jobs/recommendation.job";
+import { queueRecomputeRecommendations } from "../../jobs/recommendation.queue";
 
 interface UpsertInteractionInput {
   userId: string;

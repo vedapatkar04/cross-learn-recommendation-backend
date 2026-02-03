@@ -43,7 +43,7 @@ const models_1 = require("../../models");
 const interactionService = __importStar(require("./interactionService"));
 async function trackInteraction(req, res) {
     try {
-        const userId = req.params.userId;
+        const userId = req.user.userId;
         const { contentId, action: userAction, rating, type } = req.body;
         if (!mongoose_1.default.Types.ObjectId.isValid(contentId)) {
             return res.status(400).json({ message: "Invalid content id" });
@@ -51,7 +51,8 @@ async function trackInteraction(req, res) {
         if (!Object.values(models_1.action).includes(userAction)) {
             return res.status(400).json({ message: "Invalid action" });
         }
-        if (userAction === models_1.action.rate && (!rating || rating < 1 || rating > 5)) {
+        if (userAction === models_1.action.rate &&
+            (rating === undefined || rating < 1 || rating > 5)) {
             return res.status(400).json({ message: "Invalid rating" });
         }
         const interaction = await interactionService.upsertInteraction({
@@ -73,7 +74,7 @@ async function trackInteraction(req, res) {
 }
 async function getMyInteractions(req, res) {
     try {
-        const userId = req.params.userId;
+        const userId = req.user.userId;
         const interactions = await interactionService.getUserInteractions(userId);
         return res.status(200).json({
             message: "User interactions fetched",
