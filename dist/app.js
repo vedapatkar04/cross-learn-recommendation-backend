@@ -13,9 +13,14 @@ const interactionRoutes_1 = __importDefault(require("./routes/interactionRoutes"
 const discussionRoutes_1 = __importDefault(require("./routes/discussionRoutes"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: "*", // all
+}));
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
+app.get("/health", (req, res) => {
+    res.send("API is running 🚀");
+});
 app.use("/auth", authRoutes_1.default);
 app.use("/user", userRoutes_1.default);
 app.use("/content", contentRoutes_1.default);
